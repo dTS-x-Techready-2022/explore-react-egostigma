@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ClearableTextField from "./components/ClearableTextField";
-import uuidv4 from "./common/uuidv4";
+import { createTodo, deleteTodo } from "./store/features/todo/todoSlice";
 import './App.css';
 
 function App() {
-  const [todoList, setTodoList] = useState([]);
   const [todo, setTodo] = useState("");
 
-  useEffect(() => {
-    // console.log(todoList);
-  }, [todoList]);
+  const todos = useSelector((state) => state.todo.todos);
+  const dispatch = useDispatch();
 
   const todoChanged = (e) => {
     setTodo(e.target.value);
@@ -29,19 +28,11 @@ function App() {
   };
 
   const todoInsert = (value) => {
-    setTodoList([
-      ...todoList,
-      { key: uuidv4(), value },
-    ]);
+    dispatch(createTodo(value));
   };
 
   const todoDelete = (e, key) => {
-    let currentTodoList = todoList;
-    let updatedTodoList = currentTodoList.filter(function (el) {
-      return el.key !== key;
-    });
-
-    setTodoList(updatedTodoList);
+    dispatch(deleteTodo(key));
   };
 
   return (
@@ -78,7 +69,7 @@ function App() {
               alignItems="center"
               mt={3}
             >
-              {todoList.map(function (item, i) {
+              {todos.map(function (item, i) {
                 return (
                   <ClearableTextField
                     key={i}
